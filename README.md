@@ -11,7 +11,7 @@ Turn on certain keyboard lights when pressing caps lock or num lock for dell com
 ![caps lock on](images/numlockOFF.png)
 
 ## Windows autostart
-Put the .exe in 'shell:startup' folder
+Put the .exe in `shell:startup` folder
 
 ## Enbale AlienFX API
 To work it is necessary to enable the AlienFX API in the settings in the Alienware Command Center app.
