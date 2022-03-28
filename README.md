@@ -5,7 +5,7 @@ Turn on certain keyboard lights when pressing caps lock or num lock for dell com
 ![Normal keyboard](images/normal.png)
 
 ## Caps Lock ON
-![caps lock on](images/CapsON.png)
+![caps lock on](images/capsON.png)
 
 ## Num Lock OFF
 ![caps lock on](images/numlockOFF.png)
