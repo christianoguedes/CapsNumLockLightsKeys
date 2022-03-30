@@ -23,30 +23,33 @@ bool oldNumLockKey = false;
 
 void initializeLightFX()
 {
-	Sleep(60000); //startup windows loading alienfx libs
+	Sleep(120000); //startup windows loading alienfx libs
 	while (true)
 	{
 		alienFXLib = LoadLibrary(_T(LFX_DLL_NAME));
 		if (alienFXLib) {
 			break;
 		}
-		Sleep(500); //waiting alienfx libs
+		Sleep(10000); //waiting alienfx libs
 	}
-
 	LFX2INITIALIZE initFunction = (LFX2INITIALIZE)GetProcAddress(alienFXLib, LFX_DLL_INITIALIZE);
 	updateFunction = (LFX2UPDATE)GetProcAddress(alienFXLib, LFX_DLL_UPDATE);
 	setLightColor = (LFX2SETLIGHTCOL)GetProcAddress(alienFXLib, LFX_DLL_SETLIGHTCOL);
 	lightFunction = (LFX2LIGHT)GetProcAddress(alienFXLib, LFX_DLL_LIGHT);
 
-	while (initFunction() != LFX_SUCCESS);
+	int started = LFX_FAILURE;
+	while (started != LFX_SUCCESS) {
+		Sleep(10000); //waiting alienfx libs
+		started = initFunction();
+	}
 }
 
-bool isKeyActive(unsigned int key) 
+bool isKeyActive(unsigned int key)
 {
 	return (GetKeyState(key) & 0x0001) != 0;
 }
 
-void forceUpdateLights() 
+void forceUpdateLights()
 {
 	oldNumLockKey = !isKeyActive(VK_NUMLOCK);
 	oldCapitalKey = !isKeyActive(VK_CAPITAL);
@@ -58,26 +61,29 @@ int main()
 	initializeLightFX();
 	forceUpdateLights();
 
+	int colorAll;
+
 	while (true)
 	{
 		currentCapitalKey = isKeyActive(VK_CAPITAL);
 		currentNumLockKey = isKeyActive(VK_NUMLOCK);
-		int colorAll = currentCapitalKey ? LFX_YELLOW : colorDefault;
+		colorAll = currentCapitalKey ? LFX_YELLOW : colorDefault;
 		LFX_COLOR color = currentNumLockKey ? COLOR_DEFAULT : COLOR_RED;
 
 		if (currentCapitalKey ^ oldCapitalKey) {
 			lightFunction(LFX_ALL, colorAll | LFX_FULL_BRIGHTNESS);
 			setLightColor(0, 3, &color);
+			updateFunction();
 		}
 		if (currentNumLockKey ^ oldNumLockKey) {
 			setLightColor(0, 3, &color);
+			updateFunction();
 		}
 
 		oldNumLockKey = currentNumLockKey;
 		oldCapitalKey = currentCapitalKey;
+		Sleep(100);
 
-		updateFunction();
 	}
-	FreeLibrary(alienFXLib);
 	return 0;
 }
